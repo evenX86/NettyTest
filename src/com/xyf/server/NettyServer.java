@@ -4,6 +4,10 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.LineBasedFrameDecoder;
+import io.netty.handler.codec.string.StringDecoder;
+
+import java.nio.channels.SocketChannel;
 
 /**
  * Created by xuyifei01 on 2015/3/11.
@@ -29,10 +33,17 @@ public class NettyServer {
         }
     }
 
+    /**
+     * LineBasedFrameDecoder 运行原理是依次遍历ByteBuf中的可读字节，判断看是否有'\n'，或者'\r\n',如果有就以此作为结束位置。
+     * LineBasedFrameDecoder+StringDecoder 按行切换的文本解码器。
+     */
     private class ChildChannelHandler extends ChannelInitializer {
         @Override
         protected void initChannel(Channel ch) throws Exception {
           //  ch.pipeline().addLast(new NettyServerHandler());
+            //处理闭包的情况
+            ch.pipeline().addLast(new LineBasedFrameDecoder(1024));
+            ch.pipeline().addLast(new StringDecoder());
             ch.pipeline().addLast(new NettyServerUnSafeTCPHandler());
         }
     }

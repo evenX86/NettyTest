@@ -8,7 +8,6 @@ import io.netty.channel.ChannelHandlerContext;
 import java.io.UnsupportedEncodingException;
 
 /**
- * 没有考虑TCP粘包拆包的情况
  * Created by xuyifei01 on 2015/3/13.
  */
 public class NettyClientUnsafeTCPHandler extends ChannelHandlerAdapter{
@@ -28,11 +27,8 @@ public class NettyClientUnsafeTCPHandler extends ChannelHandlerAdapter{
         }
 
     }
-    public void channelRead(ChannelHandlerContext ctx,Object msg) throws UnsupportedEncodingException {
-        ByteBuf buf = (ByteBuf) msg;
-        byte[] req = new byte[buf.readableBytes()];
-        buf.readBytes(req);
-        String body = new String(req,"utf-8");
+    public void channelRead(ChannelHandlerContext ctx,Object msg) {
+        String body = (String) msg;
         System.out.println("Now is : " + body + "; The Counter is :" + ++counter);
     }
     public void exceptionCaught(ChannelHandlerContext ctx,Throwable cause) {
