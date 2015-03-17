@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Netty 时间服务器</title>
+</head>
+<body>
+<script>
+    var socket;
+    if (!window.WebSocket) {
+        window.WebSocket = window.MozWebSocket;
+    }
+    if (window.WebSocket) {
+        socket = new WebSocket("ws://localhost:8080/websocket");
+        socket.onmessage = function (event) {
+            var ta = document.getElementById('responseText');
+            ta.value = "";
+            ta.value = event.data;
+        }
+        socket.onopen = function(event){
+            var ta = document.getElementById('responseText');
+            ta.value = "打开websocket服务正常";
+        }
+        socket.onclose = function(event){
+            var ta = document.getElementById('responseText');
+            ta.value = "关闭websocket服务正常";
+        }
+    } else {
+        alert("不支持socket");
+    }
+    function send(message) {
+        if (!window.WebSocket) {
+            return;
+        }
+        if (socket.readyState == WebSocket.OPEN) {
+            socket.send(message);
+        } else {
+            alert("没有建立成功");
+        }
+    }
+
+</script>
+<form onsubmit="return false">
+    <input value="QAQ" type="text" name="message"/>
+    <input type="button" value="send" onclick="send(this.form.message.value)">
+    <hr>
+    <textarea id="responseText" style="width: 500px;height: 300px;">
+        
+    </textarea>
+
+</form>
+</body>
+</html>
